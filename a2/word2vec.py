@@ -132,7 +132,28 @@ def negSamplingLossAndGradient(
 
     ### YOUR CODE HERE (~10 Lines)
     ### Please use your implementation of sigmoid in here.
+    
+    negativeVectors = np.array([outsideVectors[idx] for idx in negSampleWordIndices])
 
+    loss = -np.log(sigmoid(outsideVectors[outsideWordIdx] @ centerWordVec))                # (1f) loss = - log(\sig(u_o^T.v_c)) 
+    loss -= sum(np.log(sigmoid(-negativeVectors @ centerWordVec)))                         #      loss -= - \sum_1_K(log(\sig(-u_k^T.v_c)))
+    
+    sig_k = sigmoid(-negativeVectors @ centerWordVec)
+    u_o   = outsideVectors[outsideWordIdx]
+     
+    gradCenterVec = -u_o*(1 - sigmoid(u_o @ centerWordVec))                                # dJ/ dv_c = -u_o(1 - \sig(u_o^T.v_c))
+    gradCenterVec += ((1 - sig_k) @ negativeVectors)                                       # dJ/ dv_c += \sum_1_K(u_k * (1 - \sig(-u_k^T.v_c)))
+
+    gradOutsideVecs = np.zeros(outsideVectors.shape)                                       # (1g) initialize dJ/ du_k
+    
+    gradOutsideVecs[outsideWordIdx] = (sigmoid(u_o @ centerWordVec) - 1) * centerWordVec   # dJ/ du_o = \sig(u_o^T.v_c - 1) * v_c
+
+    unique_elements       = np.unique(negSampleWordIndices)                                # unique u_k in negativeSamples
+    counts_unique_element = [negSampleWordIndices.count(item) for item in unique_elements] # number of same samples in negativeSamples
+    
+    for i, item in enumerate(unique_elements):                                             # dJ/ du_k = count(u_k) * (1 - \sig(-u_o^T.v_c)) * v_c
+        gradOutsideVecs[item] = counts_unique_element[i] * (1 - sigmoid(-outsideVectors[item] @ centerWordVec)) * centerWordVec
+    
     ### END YOUR CODE
 
     return loss, gradCenterVec, gradOutsideVecs
