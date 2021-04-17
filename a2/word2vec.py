@@ -193,12 +193,22 @@ def skipgram(currentCenterWord, windowSize, outsideWords, word2Ind,
                     in shape (num words in vocab, word vector length) 
                     (dJ / dU)
     """
-
     loss = 0.0
     gradCenterVecs = np.zeros(centerWordVectors.shape)
     gradOutsideVectors = np.zeros(outsideVectors.shape)
 
     ### YOUR CODE HERE (~8 Lines)
+    
+    centerWordIdx = word2Ind[currentCenterWord]
+    centerWordVec = centerWordVectors[centerWordIdx] # v_c
+
+    for i in range(len(outsideWords)):
+        
+        outsideIdx = word2Ind[outsideWords[i]]
+        loss_i, gradCenterVec_i, gradOutsideVecs_i = word2vecLossAndGradient(centerWordVec, outsideIdx, outsideVectors, dataset) # (1h)
+        loss                          += loss_i                 # sum over J(v_c, w_o, U) where w_o is outside word
+        gradOutsideVectors            += gradOutsideVecs_i      # dJ/ dU += dJ/ dU_i   [add to full matrix  ]
+        gradCenterVecs[centerWordIdx] += gradCenterVec_i        # dJ/ dv_c += dJ/ dv_i [add to i-th row only]
 
     ### END YOUR CODE
     
