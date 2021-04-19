@@ -1,3 +1,7 @@
 *.
 .ipynb_checkpoints/
 __pycache__
+__MACOSX
+datasets
+saved_params_*
+saved_state_*
