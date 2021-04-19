@@ -38,6 +38,6 @@ python run.py
 
 iter 40000: 9.812206
 
-![Word2Vec](a2/word_vectors.png)
+![Word2Vec](word_vectors.png)
 
-## Refer to ![handout](a2/handout2.pdf) for more detailed instructions
+## Refer to ![handout](handout2.pdf) for more detailed instructions
