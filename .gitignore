@@ -5,3 +5,5 @@ __MACOSX
 datasets
 saved_params_*
 saved_state_*
+data
+results
